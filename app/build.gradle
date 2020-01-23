@@ -1,0 +1,102 @@
+apply plugin: 'com.android.application'
+apply plugin: "de.mannodermaus.android-junit5"
+
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+    defaultConfig {
+        applicationId "raum.muchbeer.unittest"
+        minSdkVersion 23
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        androidTest.java.srcDirs += "src/test-common/java"
+        test.java.srcDirs += "src/test-common/java"
+    }
+}
+
+dependencies {
+    def junit_third_part = "5.5.2"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    //Instrumentation testing
+    testImplementation 'junit:junit:4.12'
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.5.2"
+
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    // (Required) Writing and executing Unit Tests on the JUnit Platform
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_third_part"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_third_part"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_third_part"
+
+    // AndroidX test Core library
+    def androidx_test_version = "1.2.0"
+    androidTestImplementation "androidx.test:core:$androidx_test_version"
+    // AndroidJUnitRunner and JUnit Rules
+    androidTestImplementation "androidx.test:rules:$androidx_test_version"
+    androidTestImplementation "androidx.test:runner:$androidx_test_version"
+
+    // Test helpers for LiveData Architecture components testing
+    def androidx_arch_test_version = "2.1.0"
+    androidTestImplementation "androidx.arch.core:core-testing:$androidx_arch_test_version"
+
+    // -------- MOCKITO
+    def mockito_version = "3.1.0"
+    testImplementation "org.mockito:mockito-core:$mockito_version"
+
+    // Dagger
+    def dagger_version = "2.25.4"
+    // Dagger2 core
+    implementation "com.google.dagger:dagger:$dagger_version"
+    annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
+
+// Dagger Android
+    implementation "com.google.dagger:dagger-android:$dagger_version"
+    implementation "com.google.dagger:dagger-android-support:$dagger_version"
+    annotationProcessor "com.google.dagger:dagger-android-processor:$dagger_version"
+
+    def material_version = "1.0.0"
+    implementation "com.google.android.material:material:$material_version"
+
+    def room_version = "2.2.3"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    // optional - RxJava support for Room
+    implementation "androidx.room:room-rxjava2:$room_version"
+
+    // ViewModel and LiveData
+    def lifecycle_version = '2.2.0'
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+
+    // Reactive Streams (convert Observable to LiveData)
+    def reactivestreams_version = "1.1.1"
+    implementation "android.arch.lifecycle:reactivestreams:$reactivestreams_version"
+
+    // RxJava
+    def rxjava_version = '2.2.10'
+    implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
+
+    // RxAndroid
+    def rxandroid_version = '2.1.1'
+    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+
+    // Rx-Retrofit Call Adapter
+    def rxcalladapter_version = '2.3.0'
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$rxcalladapter_version"
+
+}
