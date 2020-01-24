@@ -8,21 +8,34 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import raum.muchbeer.unittest.reminder.ExamsReminder;
+import javax.inject.Inject;
 
-public class MainActivity extends AppCompatActivity {
+import dagger.android.support.DaggerAppCompatActivity;
+import raum.muchbeer.unittest.reminder.ExamsReminder;
+import raum.muchbeer.unittest.repo.LocalRepository;
+
+public class MainActivity extends DaggerAppCompatActivity {
 
     private static final String EXAM_DAY = "exam_day_key";
     private static final String EXAM_PERSON = "exam_person_key" ;
+
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
+    @Inject
+    LocalRepository localRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.d(LOG_TAG, "Oncreate Return " + localRepository);
+
     }
 
     @Override
