@@ -8,7 +8,7 @@ import raum.muchbeer.unittest.model.Note;
 
 public class TestUtil {
 
-    public static final String TIMESTAMP_1 = "05-2019";
+    public static final String TIMESTAMP_1 = "01-2020";
     public static final Note TEST_NOTE_1 = new Note("Take out the trash", "It's garbage day tomorrow.", TIMESTAMP_1);
 
     public static final String TIMESTAMP_2 = "06-2019";
