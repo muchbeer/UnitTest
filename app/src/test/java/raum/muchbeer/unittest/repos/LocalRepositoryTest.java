@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import io.reactivex.Single;
 import raum.muchbeer.unittest.model.Note;
@@ -29,6 +28,7 @@ import static org.mockito.Mockito.when;
 import static raum.muchbeer.unittest.repo.LocalRepository.INSERT_SUCCESS;
 import static raum.muchbeer.unittest.repo.LocalRepository.NOTE_TITLE_NULL;
 import static raum.muchbeer.unittest.repo.LocalRepository.UPDATE_FAILURE;
+import static raum.muchbeer.unittest.repo.LocalRepository.UPDATE_SUCCESS;
 
 public class LocalRepositoryTest {
 
@@ -43,11 +43,11 @@ public class LocalRepositoryTest {
 
     @BeforeEach
     public void initEach() {
-       // MockitoAnnotations.initMocks(this);
+        // MockitoAnnotations.initMocks(this);
         noteDao = Mockito.mock(NoteDao.class);
 
         localRepository = new LocalRepository(noteDao);
-        
+
     }
 
 
@@ -117,6 +117,64 @@ null title
         });
 
         assertEquals(NOTE_TITLE_NULL, exception.getMessage());
+    }
+
+     /*
+        update note
+        verify correct method is called
+        confirm observer is trigger
+        confirm number of rows updated
+     */
+
+    @Test
+    void updateNote_returnNumRowsUpdated() throws Exception {
+        // Arrange
+        final int updatedRow = 1;
+        when(noteDao.updateNote(any(Note.class))).thenReturn(Single.just(updatedRow));
+
+        // Act
+        final DataStateStatus<Integer> returnedValue = localRepository.updateNote(NOTE1).blockingFirst();
+
+        // Assert
+        verify(noteDao).updateNote(any(Note.class));
+        verifyNoMoreInteractions(noteDao);
+
+        Assertions.assertEquals(DataStateStatus.success(updatedRow, UPDATE_SUCCESS), returnedValue);
+    }
+
+    /*   update note   Failure (-1)   */
+
+    @Test
+    void updateNote_returnFailure() throws Exception {
+        // Arrange
+        final int failedInsert = -1;
+        final Single<Integer> returnedData = Single.just(failedInsert);
+        when(noteDao.updateNote(any(Note.class))).thenReturn(returnedData);
+
+        // Act
+        final DataStateStatus<Integer> returnedValue = localRepository.updateNote(NOTE1).blockingFirst();
+
+        // Assert
+        verify(noteDao).updateNote(any(Note.class));
+        verifyNoMoreInteractions(noteDao);
+
+        Assertions.assertEquals(DataStateStatus.error(null, UPDATE_FAILURE), returnedValue);
+    }
+
+    /*  update note  null title  throw exception   */
+    @Test
+    void updateNote_nullTitle_throwException() throws Exception {
+
+        Exception exception = assertThrows(Exception.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                final Note note  = new Note(TestUtil.TEST_NOTE_1);
+                note.setTitle(null);
+                localRepository.updateNote(note);
+            }
+        });
+
+        Assertions.assertEquals(NOTE_TITLE_NULL, exception.getMessage());
     }
 
     @Test

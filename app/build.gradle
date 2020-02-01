@@ -27,13 +27,16 @@ android {
     }
 
 
-
     sourceSets {
         androidTest.java.srcDirs += "src/test_common/java"
         test.java.srcDirs += "src/test_common/java"
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 
- // testOptions { unitTests.returnDefaultValues = true }
+    // testOptions { unitTests.returnDefaultValues = true }
 }
 
 dependencies {
@@ -63,11 +66,10 @@ dependencies {
 
     // Test helpers for LiveData Architecture components testing
     def androidx_arch_test_version = "2.1.0"
-  // androidTestImplementation "androidx.arch.core:core-testing:$androidx_arch_test_version"
+    // androidTestImplementation "androidx.arch.core:core-testing:$androidx_arch_test_version"
     // optional - Test helpers for LiveData
 
     testImplementation "androidx.arch.core:core-testing:$androidx_arch_test_version"
-
 
 
     // -------- MOCKITO
