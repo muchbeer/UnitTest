@@ -25,20 +25,14 @@ import raum.muchbeer.unittest.ui.DataStateStatus;
 import raum.muchbeer.unittest.util.LiveDataTestUtil;
 import raum.muchbeer.unittest.util.TestUtil;
 
-
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static raum.muchbeer.unittest.repo.LocalRepository.DELETE_FAILURE;
-import static raum.muchbeer.unittest.repo.LocalRepository.DELETE_SUCCESS;
 import static raum.muchbeer.unittest.repo.LocalRepository.INSERT_SUCCESS;
-import static raum.muchbeer.unittest.repo.LocalRepository.INVALID_NOTE_ID;
 import static raum.muchbeer.unittest.repo.LocalRepository.NOTE_TITLE_NULL;
 import static raum.muchbeer.unittest.repo.LocalRepository.UPDATE_SUCCESS;
 import static raum.muchbeer.unittest.viewmodel.NoteViewModel.NO_CONTENT_ERROR;
