@@ -46,7 +46,7 @@ public class BookActivity extends DaggerAppCompatActivity implements
         View.OnClickListener,
         TextWatcher {
 
-    private static final String TAG = "NoteActivity";
+    private static final String TAG = BookActivity.class.getSimpleName();
 
     // UI components
     private LinedEditClass linedEditText;

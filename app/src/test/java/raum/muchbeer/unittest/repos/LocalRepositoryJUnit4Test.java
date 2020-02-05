@@ -2,14 +2,13 @@ package raum.muchbeer.unittest.repos;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 
-import net.bytebuddy.asm.Advice;
-
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -18,12 +17,9 @@ import raum.muchbeer.unittest.model.Note;
 import raum.muchbeer.unittest.repo.LocalRepository;
 import raum.muchbeer.unittest.roomdb.NoteDao;
 import raum.muchbeer.unittest.ui.DataStateStatus;
-import raum.muchbeer.unittest.util.InstantExecutorExtension;
 import raum.muchbeer.unittest.util.LiveDataTestUtil;
 import raum.muchbeer.unittest.util.TestUtil;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -36,20 +32,23 @@ import static raum.muchbeer.unittest.repo.LocalRepository.NOTE_TITLE_NULL;
 import static raum.muchbeer.unittest.repo.LocalRepository.UPDATE_FAILURE;
 import static raum.muchbeer.unittest.repo.LocalRepository.UPDATE_SUCCESS;
 
-@ExtendWith(InstantExecutorExtension.class)
-
-public class LocalRepositoryTest {
+@RunWith(JUnit4.class)
+public class LocalRepositoryJUnit4Test {
 
     @Rule
-    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
+public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
+
     private static final Note NOTE1 = new Note(TestUtil.TEST_NOTE_1);
 
     private LocalRepository localRepository;
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
 
     @Mock
     private NoteDao noteDao;
 
-    @BeforeEach
+    @Before
     public void initEach() {
         // MockitoAnnotations.initMocks(this);
         noteDao = Mockito.mock(NoteDao.class);
@@ -59,13 +58,11 @@ public class LocalRepositoryTest {
     }
 
 
-  /*  insert note
-    verify the correct method is called
-    confirm observer is triggered
+  /*  insert note  verify the correct method is called confirm observer is triggered
     confirm new row inserted*/
 
     @Test
-    void insertNote_returnRow() throws Exception {
+   public void insertNote_returnRow() throws Exception {
         // Arrange
         final Long insertedRow = 1L;
         final Single<Long> returnedData = Single.just(insertedRow);
@@ -79,7 +76,7 @@ public class LocalRepositoryTest {
         verifyNoMoreInteractions(noteDao);
 
         System.out.println("Returned value: " + returnedValue.data);
-        assertEquals(DataStateStatus.success(1, INSERT_SUCCESS), returnedValue);
+        Assert.assertEquals(DataStateStatus.success(1, INSERT_SUCCESS), returnedValue);
 
 
 //        // Or test using RxJava
@@ -94,7 +91,7 @@ public class LocalRepositoryTest {
     Failure (return -1)*/
 
     @Test
-    void insertNote_returnFailure() throws Exception {
+   public void insertNote_returnFailure() throws Exception {
         // Arrange
         final int failedInsert = -1;
         final Single<Integer> returnedData = Single.just(failedInsert);
@@ -107,35 +104,32 @@ public class LocalRepositoryTest {
         verify(noteDao).updateNote(any(Note.class));
         verifyNoMoreInteractions(noteDao);
 
-        assertEquals(DataStateStatus.error(null, UPDATE_FAILURE), returnedValue);
-    }
-/*   insert note
-null title
-    confirm throw exception*/
-
-    @Test
-    void insertNote_returnNull_throwException() throws Exception {
-        Exception exception = assertThrows(Exception.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                final Note note  = new Note(TestUtil.TEST_NOTE_1);
-                note.setTitle(null);
-                localRepository.insertNote(note);
-            }
-        });
-
-        assertEquals(NOTE_TITLE_NULL, exception.getMessage());
+        Assert.assertEquals(DataStateStatus.error(null, UPDATE_FAILURE), returnedValue);
     }
 
-     /*
-        update note
-        verify correct method is called
-        confirm observer is trigger
-        confirm number of rows updated
-     */
+
+/*   insert note null title  confirm throw exception*/
 
     @Test
-    void updateNote_returnNumRowsUpdated() throws Exception {
+   public void insertNote_returnNull_throwException() throws Exception {
+
+        //Arrange
+        final Note note = new Note(TestUtil.TEST_NOTE_1);
+        note.setTitle(null);
+
+        thrown.expect(Exception.class);
+        thrown.expectMessage(NOTE_TITLE_NULL);
+
+        //Assert
+        localRepository.insertNote(note);
+
+     }
+
+     /*  update note verify correct method is called  confirm observer is trigger
+     confirm number of rows updated  */
+
+    @Test
+   public void updateNote_returnNumRowsUpdated() throws Exception {
         // Arrange
         final int updatedRow = 1;
         when(noteDao.updateNote(any(Note.class))).thenReturn(Single.just(updatedRow));
@@ -147,13 +141,13 @@ null title
         verify(noteDao).updateNote(any(Note.class));
         verifyNoMoreInteractions(noteDao);
 
-        Assertions.assertEquals(DataStateStatus.success(updatedRow, UPDATE_SUCCESS), returnedValue);
+        Assert.assertEquals(DataStateStatus.success(updatedRow, UPDATE_SUCCESS), returnedValue);
     }
 
     /*   update note   Failure (-1)   */
 
     @Test
-    void updateNote_returnFailure() throws Exception {
+   public void updateNote_returnFailure() throws Exception {
         // Arrange
         final int failedInsert = -1;
         final Single<Integer> returnedData = Single.just(failedInsert);
@@ -166,46 +160,46 @@ null title
         verify(noteDao).updateNote(any(Note.class));
         verifyNoMoreInteractions(noteDao);
 
-        Assertions.assertEquals(DataStateStatus.error(null, UPDATE_FAILURE), returnedValue);
+        Assert.assertEquals(DataStateStatus.error(null, UPDATE_FAILURE), returnedValue);
     }
 
     /*  update note  null title  throw exception   */
     @Test
-    void updateNote_nullTitle_throwException() throws Exception {
+   public void updateNote_nullTitle_throwException() throws Exception {
 
-        Exception exception = assertThrows(Exception.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                final Note note  = new Note(TestUtil.TEST_NOTE_1);
-                note.setTitle(null);
-                localRepository.updateNote(note);
-            }
-        });
+        //Arrange
+        final Note note = new Note(TestUtil.TEST_NOTE_1);
+        note.setTitle(null);
 
-        Assertions.assertEquals(NOTE_TITLE_NULL, exception.getMessage());
+        //Act
+        thrown.expect(Exception.class);
+        thrown.expectMessage(NOTE_TITLE_NULL);
+
+
+        //Assert
+        localRepository.updateNote(note);
+
     }
-
 
     /*        delete note          null id        throw exception     */
     @Test
-    void deleteBook_nullId_throwException() throws Exception {
+   public void deleteBook_nullId_throwException() throws Exception {
 
-        Exception exception = assertThrows(Exception.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                final Note note = new Note(TestUtil.TEST_NOTE_1);
-                note.setId(-1);
-                localRepository.deleteBook(note);
-            }
-        });
+        //Arrange
+        final Note note = new Note(TestUtil.TEST_NOTE_1);
+        note.setId(-1);
 
-        assertEquals(INVALID_NOTE_ID, exception.getMessage());
-    }
+        //Act
+        thrown.expect(Exception.class);
+        thrown.expectMessage(INVALID_NOTE_ID);
+
+        //Assert
+      localRepository.deleteBook(note);  }
 
 
     /*  delete note  delete success  return Resource.success with deleted row */
     @Test
-     void deleteNote_deleteSuccess_returnResourceSuccess() throws Exception {
+   public void deleteNote_deleteSuccess_returnResourceSuccess() throws Exception {
         // Arrange
         final int deletedRow = 1;
         DataStateStatus<Integer> successResponse = DataStateStatus.success(deletedRow, DELETE_SUCCESS);
@@ -217,7 +211,7 @@ null title
         DataStateStatus<Integer> observedResponse = liveDataTestUtil.getValue(localRepository.deleteBook(NOTE1));
 
         // Assert
-        assertEquals(successResponse, observedResponse);
+        Assert.assertEquals(successResponse, observedResponse);
     }
 
     /*
@@ -235,12 +229,14 @@ null title
         DataStateStatus<Integer> observedResponse = liveDataTestUtil.getValue(localRepository.deleteBook(NOTE1));
 
         // Assert
-        assertEquals(errorResponse, observedResponse);
+        Assert.assertEquals(errorResponse, observedResponse);
     }
     @Test
-    void giannaDummyTest() throws Exception {
+   public void giannaDummyTest() throws Exception {
 
-        Assertions.assertNotNull(noteDao);
-        Assertions.assertNotNull(localRepository);
+        Assert.assertNotNull(noteDao);
+        Assert.assertNotNull(localRepository);
     }
+
+
 }

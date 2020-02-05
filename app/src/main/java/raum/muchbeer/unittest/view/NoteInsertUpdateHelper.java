@@ -20,6 +20,9 @@ public abstract class NoteInsertUpdateHelper<T> {
     private void init() {
         result.setValue((DataStateStatus<T>) DataStateStatus.loading(null));
         try {
+//is the source of what can get set to the livedata
+            //getAction will decide wether to use the insert method a note or to update a note
+            //then we can add the source to the mediatorLiveData so that it can observe that data
             final LiveData<DataStateStatus<T>> source = getAction();
             result.addSource(source, tResource-> {
                 result.removeSource(source);

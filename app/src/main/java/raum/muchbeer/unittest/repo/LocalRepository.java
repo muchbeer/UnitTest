@@ -21,7 +21,7 @@ import raum.muchbeer.unittest.ui.DataStateStatus;
 public class LocalRepository {
 
     public static final String NOTE_TITLE_NULL = "Note title cannot be null";
-    public static final String INVALID_NOTE_ID = "Invalid id. Can't delete note";
+    public static final String INVALID_NOTE_ID = "Invalid id";
     public static final String DELETE_SUCCESS = "Delete success";
     public static final String DELETE_FAILURE = "Delete failure";
     public static final String UPDATE_SUCCESS = "Update success";
@@ -101,7 +101,7 @@ public class LocalRepository {
                 .toFlowable();
     }
 
-    public LiveData<DataStateStatus<Integer>> deleteNote(final Note note) throws Exception{
+    public LiveData<DataStateStatus<Integer>> deleteBook(final Note note) throws Exception{
 
         checkId(note);
 
